@@ -12,7 +12,7 @@ steps:
     commands:
       - echo "repo1 changed"
 
-  - name: step1
+  - name: step2
     image: nginx
     commands:
       - echo "repo1 changed"
