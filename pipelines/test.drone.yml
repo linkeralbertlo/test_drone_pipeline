@@ -1,3 +1,4 @@
+---
 kind: pipeline
 type: docker
 
@@ -46,8 +47,10 @@ steps:
       - docker push $(ACR_SERVICE_NAME)/backend:latest
     depends_on:
       - build-backend
-
 ---
+kind: pipeline
+type: docker
+
 steps:
   - name: build-backend-pre2
     image: microsoft/azure-pipelines-cli
