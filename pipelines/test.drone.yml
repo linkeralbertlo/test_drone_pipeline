@@ -1,48 +1,18 @@
 kind: pipeline
 type: docker
 
+trigger:
+  paths:
+    include:
+      - repo1/*  
+
 steps:
-  - name: build-backend-pre
-    image: microsoft/azure-pipelines-cli
+  - name: step1
+    image: nginx
     commands:
-      - az login --service-principal --username "$(ACR_SUBSCRIPTION)" --password "$(ACR_PASSWORD)" --tenant "$(ACR_TENANT)"
-      - git_token=$(az keyvault secret show --vault-name linker-machine-users --name git --query "value" -o tsv)
-      - echo "GIT_TOKEN=$git_token" >> ~/.bashrc
+      - echo "repo1 changed"
 
-  - name: login-registry
-    image: plugins/acr
-    settings:
-      service_principal_client_id: xxxxxx
-      service_principal_client_secret: xxxxxx
-      registry: "$(ACR_SERVICE_NAME)"
-
-  - name: cache-pull
-    image: docker
+  - name: step1
+    image: nginx
     commands:
-      - docker pull $(ACR_FULLNAME)/$(make show-module):$(LATEST_IMAGE_TAG)
-    when:
-      status:
-        - failure
-
-  - name: pull-image
-    image: docker
-    commands:
-      - docker pull $(ACR_FULLNAME)/$(make show-module):$(LATEST_IMAGE_TAG)
-
-  - name: build-backend
-    image: docker
-    commands:
-      - cd django
-      - make build-service ACR_FULLNAME=$(ACR_FULLNAME)
-      - docker tag $(make show-module) $(ACR_FULLNAME)/$(make show-module):$(Build.SourceVersion)-$(Build.BuildId)
-      - docker tag $(make show-module) $(ACR_FULLNAME)/$(make show-module):$(LATEST_IMAGE_TAG)
-    depends_on:
-      - build-backend-pre
-
-  - name: push-image
-    image: docker
-    commands:
-      - docker push $(ACR_SERVICE_NAME)/backend:$(Build.SourceVersion)-$(Build.BuildId)
-      - docker push $(ACR_SERVICE_NAME)/backend:latest
-    depends_on:
-      - build-backend
+      - echo "repo1 changed"
